@@ -21,7 +21,7 @@ std::set<std::string> lines;
 
 
 /* returns packet id */
-static u_int32_t print_pkt (struct nfq_data *tb,uint32_t* id)
+static bool print_pkt (struct nfq_data *tb,uint32_t* id)
 {
 	*id = 0;
 	struct nfqnl_msg_packet_hdr *ph;
@@ -110,7 +110,13 @@ static u_int32_t print_pkt (struct nfq_data *tb,uint32_t* id)
 			int host_len=0;
 			while(strncmp((char*)data+i+8+host_len,"\r\n",2))host_len++;
 			std::string str=std::string((char*)data+i+8,host_len);
-			return lines.find(str)==lines.end();
+			std::cout << "Host detected, searching.." << std::endl;
+			auto start = std::chrono::high_resolution_clock::now();
+			bool ret = lines.find(str)==lines.end();
+			auto stop = std::chrono::high_resolution_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+			std::cout << "time taken: " << duration.count() / 1000.0 << " seconds" << std::endl;
+			return ret;
 		}
 	}
 	fputc('\n', stdout);
@@ -152,9 +158,9 @@ int main(int argc, char **argv)
 	}
 	file.close();
 	auto stop = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 	std::cout << "file loaded" << std::endl;
-	std::cout << "time taken: " << duration.count() << " seconds" << std::endl;
+	std::cout << "time taken: " << duration.count() / 1000.0 << " seconds" << std::endl;
 
 	
 	printf("opening library handle\n");
