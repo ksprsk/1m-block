@@ -114,8 +114,8 @@ static bool print_pkt (struct nfq_data *tb,uint32_t* id)
 			auto start = std::chrono::high_resolution_clock::now();
 			bool ret = lines.find(str)==lines.end();
 			auto stop = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-			std::cout << "time taken: " << duration.count() / 1000.0 << " seconds" << std::endl;
+			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+			std::cout << "time taken: " << duration.count() / 1000.0 << " milliseconds" << std::endl;
 			return ret;
 		}
 	}
