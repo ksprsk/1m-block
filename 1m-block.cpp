@@ -9,6 +9,8 @@
 #include <cstring>
 #include <fstream>
 #include <libnetfilter_queue/libnetfilter_queue.h>
+#include <chrono>
+#include <iostream>
 
 void usage() {
 	printf("syntax : 1m-block <site list file>\n");
@@ -138,6 +140,7 @@ int main(int argc, char **argv)
 		usage();
 		return false;
 	}
+	auto start = std::chrono::high_resolution_clock::now();
 	file.open(argv[1]);
 	std::string line;
 	while (std::getline(file, line)) {
@@ -148,16 +151,12 @@ int main(int argc, char **argv)
 		lines.insert(line);
 	}
 	file.close();
-	printf("file loaded\n");
-	//this takes only 2sec. std::set<T>::find is O(log(n))
-	/*
-	std::string str("nave.com");
-	for(int i=0;i<10000000;i++)
-	{
-		lines.find(str)!=lines.end();
-	}
-	printf("done?%d\n",lines.find(str)!=lines.end());
-	*/
+	auto stop = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+	std::cout << "file loaded" << std::endl;
+	std::cout << "time taken: " << duration.count() << " seconds" << std::endl;
+
+	
 	printf("opening library handle\n");
 	h = nfq_open();
 	if (!h) {
