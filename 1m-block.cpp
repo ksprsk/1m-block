@@ -16,7 +16,6 @@ void usage() {
 }
 std::ifstream file;
 std::set<std::string> lines;
-const char* host="asdfas";
 
 
 /* returns packet id */
